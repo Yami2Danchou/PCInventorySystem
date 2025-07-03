@@ -1,0 +1,3 @@
+SSD,GUDGA 128GB,599,168
+Monitor,Dell 24inch IPS,4599,9
+SSD,Kingson 128GB,129,100

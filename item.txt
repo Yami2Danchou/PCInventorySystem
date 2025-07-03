@@ -1,0 +1,48 @@
+002,CPU,i7 2770,2100,10
+003,RAM,8GB DDR3,599,233
+004,MONITOR,AOC 24inch IPS,3000,1008
+005,HDD,Seagate 1TB,1800,120
+006,GPU,NVIDIA GTX 1650,8500,45
+007,Motherboard,ASUS B450M-A,4200,65
+008,Power Supply,Seasonic 550W Bronze,2700,80
+009,Case,DeepCool MATREXX 30,1600,90
+010,Cooling Fan,Cooler Master RGB Fan,500,200
+011,Keyboard,Logitech K120,650,300
+012,Mouse,Razer DeathAdder V2,2400,50
+013,Headset,Redragon H510 Zeus,2600,70
+014,Speakers,Creative Pebble V3,1800,60
+015,Webcam,Logitech C270 HD,1700,85
+016,Network Card,TP-Link WiFi PCIe AC1300,1200,110
+017,Optical Drive,LG DVD Writer,950,40
+018,UPS,APC 650VA,3900,25
+019,Thermal Paste,Arctic MX-4,400,150
+020,Capture Card,Elgato HD60 S+,8200,15
+021,CPU,AMD Ryzen 5 5600G,8200,60  
+022,RAM,Corsair Vengeance 16GB DDR4,2800,100  
+023,SSD,WD Blue 500GB NVMe,2500,90  
+024,HDD,WD 2TB Blue,2950,75  
+025,GPU,AMD Radeon RX 6600,13500,40  
+026,Motherboard,MSI B550M Pro-VDH,4800,55  
+027,Power Supply,Corsair CV650 80+ Bronze,3200,50  
+028,Monitor,Samsung 27-inch Curved,7200,30  
+029,Case,Lian Li LANCOOL 215,3500,40  
+030,Cooling Fan,ARCTIC F12 PWM,350,220  
+031,Keyboard,Redragon K552 Mechanical,1600,85  
+032,Mouse,Logitech G102 Lightsync,950,190  
+033,Headset,HyperX Cloud II,4100,35  
+034,Speakers,Logitech Z313,2200,45  
+035,Webcam,AverMedia PW313,3000,25  
+036,Network Card,Intel Gigabit PCIe LAN,800,120  
+037,Optical Drive,ASUS External DVD Drive,1300,40  
+038,UPS,Eaton 5E 850VA,4100,20  
+039,Thermal Paste,Noctua NT-H1,450,160  
+040,Capture Card,AVerMedia Live Gamer Mini,4900,10  
+041,Prebuilt PC,CyberPowerPC Gamer Xtreme,45999,5
+042,Prebuilt PC,ABS Stratos Aqua Gaming PC,72999,3
+043,Prebuilt PC,MSI Aegis RS 13NUE-450US,99999,2
+044,Prebuilt PC,Alienware Aurora R16,118000,1
+045,Office PC,Dell OptiPlex 7010 SFF,18999,10
+046,Office PC,HP ProDesk 400 G7,19999,8
+047,Office PC,Lenovo ThinkCentre M70t,21999,6
+048,Office PC,Acer Veriton ES2735G,17999,12
+049,RAM,SAMSUNG DDR5 5600MHZ,6999,100

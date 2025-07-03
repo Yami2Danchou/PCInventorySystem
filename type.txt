@@ -1,0 +1,23 @@
+CPU  
+RAM  
+SSD  
+HDD  
+GPU
+Motherboard  
+PSU  
+Monitor  
+Case  
+Cooling Fan  
+Keyboard  
+Mouse  
+Headset  
+Speakers  
+Webcam  
+Network Card
+Optical Drive
+UPS
+AVR
+Thermal Paste  
+Capture Card
+Prebuilt PC
+Office PC
