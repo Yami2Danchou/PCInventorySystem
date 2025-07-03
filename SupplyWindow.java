@@ -1,18 +1,22 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 
 public class SupplyWindow extends JFrame {
+
     private JTextField dateField, quantityField;
     private JButton addSupplyButton;
     private String itemName;
 
-    public SupplyWindow(String itemName) {
+    private DefaultTableModel inventoryModel; // reference to update table
+
+    public SupplyWindow(String itemName, DefaultTableModel inventoryModel) {
         this.itemName = itemName;
+        this.inventoryModel = inventoryModel;
+
         setTitle("Add Supply - " + itemName);
         setSize(300, 200);
         setLocationRelativeTo(null);
@@ -26,7 +30,7 @@ public class SupplyWindow extends JFrame {
         add(dateField);
         add(new JLabel("Quantity:"));
         add(quantityField);
-        add(new JLabel());
+        add(new JLabel()); // spacer
         add(addSupplyButton);
 
         addSupplyButton.addActionListener(this::addSupply);
@@ -42,20 +46,52 @@ public class SupplyWindow extends JFrame {
         }
 
         try {
-            int quantity = Integer.parseInt(quantityStr);
-            if (quantity <= 0) throw new NumberFormatException();
+            int addedQty = Integer.parseInt(quantityStr);
+            if (addedQty <= 0) throw new NumberFormatException();
 
+            // Append to supply.txt
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("supply.txt", true))) {
-                writer.write(itemName + "," + date + "," + quantity);
+                writer.write(itemName + "," + date + "," + addedQty);
                 writer.newLine();
-                JOptionPane.showMessageDialog(this, "Supply added successfully.");
-                this.dispose();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error writing supply: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
             }
+
+            // Update inventory table model quantity
+            boolean found = false;
+            for (int i = 0; i < inventoryModel.getRowCount(); i++) {
+                if (inventoryModel.getValueAt(i, 2).toString().equalsIgnoreCase(itemName)) {
+                    int currentQty = Integer.parseInt(inventoryModel.getValueAt(i, 4).toString());
+                    int newQty = currentQty + addedQty;
+                    inventoryModel.setValueAt(String.valueOf(newQty), i, 4);
+                    found = true;
+                    break;
+                }
+            }
+
+            // Optional: Save back to item.txt
+            if (found) updateItemFile();
+
+            JOptionPane.showMessageDialog(this, "Supply added and inventory updated.");
+            this.dispose();
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Quantity must be a valid positive number.", "Input Error", JOptionPane.WARNING_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error updating inventory: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-} 
+
+    // Rewrite item.txt with updated inventory
+    private void updateItemFile() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("item.txt"))) {
+            for (int i = 0; i < inventoryModel.getRowCount(); i++) {
+                writer.write(String.join(",",
+                        inventoryModel.getValueAt(i, 0).toString(),
+                        inventoryModel.getValueAt(i, 1).toString(),
+                        inventoryModel.getValueAt(i, 2).toString(),
+                        inventoryModel.getValueAt(i, 3).toString(),
+                        inventoryModel.getValueAt(i, 4).toString()));
+                writer.newLine();
+            }
+        }
+    }
+}

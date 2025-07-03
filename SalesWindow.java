@@ -15,14 +15,22 @@ import java.util.List;
 import java.util.Vector;
 
 public class SalesWindow extends JFrame {
+
+    // Table and Models
     private JTable table;
     private DefaultTableModel inventoryModel;
     private DefaultTableModel salesDisplayModel;
+
+    // Buttons
     private JButton processSaleButton, salesReportButton, switchToInventoryButton;
+
+    // Stores sale records in memory
     private List<SaleRecord> salesList = new ArrayList<>();
 
+    // File name for storing sales data
     private static final String SALES_FILE_NAME = "sales_records.txt";
 
+    // Constructor: Initializes the Sales Window
     public SalesWindow(JFrame inventoryWindow, DefaultTableModel sharedModel) {
         setTitle("Sales System");
         setSize(1000, 500);
@@ -31,29 +39,33 @@ public class SalesWindow extends JFrame {
 
         this.inventoryModel = sharedModel;
 
+        // Define columns for the sales table
         String[] columnNames = {"Select", "ID", "Type", "Name", "Price", "Sale Quantity", "Available Quantity"};
         salesDisplayModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 0) return Boolean.class;
-                if (columnIndex == 5) return String.class;
+                if (columnIndex == 0) return Boolean.class; // Checkbox column
+                if (columnIndex == 5) return String.class; // Sale Quantity column
                 return super.getColumnClass(columnIndex);
             }
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 0 || column == 5;
+                return column == 0 || column == 5; // Allow editing for checkbox and sale quantity
             }
         };
 
+        // Initialize JTable
         table = new JTable(salesDisplayModel);
         JScrollPane scrollPane = new JScrollPane(table);
 
+        // Set checkbox column width and behavior
         TableColumnModel tcm = table.getColumnModel();
         tcm.getColumn(0).setMaxWidth(50);
         tcm.getColumn(0).setCellRenderer(table.getDefaultRenderer(Boolean.class));
         tcm.getColumn(0).setCellEditor(table.getDefaultEditor(Boolean.class));
 
+        // Set sale quantity column to accept only digits
         JTextField saleQtyInput = new JTextField();
         saleQtyInput.addKeyListener(new KeyAdapter() {
             @Override
@@ -66,9 +78,12 @@ public class SalesWindow extends JFrame {
         });
         tcm.getColumn(5).setCellEditor(new DefaultCellEditor(saleQtyInput));
 
+        // Load inventory data into sales display table
         loadSalesDisplayTable();
+        // Load previously saved sales records
         loadSalesRecords();
 
+        // Create and add buttons
         processSaleButton = new JButton("Process Sale");
         salesReportButton = new JButton("Sales Report");
         switchToInventoryButton = new JButton("Inventory Mode");
@@ -81,14 +96,16 @@ public class SalesWindow extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
+        // Button listeners
         processSaleButton.addActionListener(e -> processSale());
         salesReportButton.addActionListener(e -> showSalesReport());
         switchToInventoryButton.addActionListener(e -> {
             ((InventoryWindow) inventoryWindow).saveToFile();
             inventoryWindow.setVisible(true);
-            this.dispose();
+            this.dispose(); // Close sales window
         });
 
+        // Listener to validate quantity changes
         salesDisplayModel.addTableModelListener(e -> {
             if (e.getColumn() == 5) {
                 int row = e.getFirstRow();
@@ -113,6 +130,7 @@ public class SalesWindow extends JFrame {
             }
         });
 
+        // Save sales when closing the window
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -122,22 +140,24 @@ public class SalesWindow extends JFrame {
         });
     }
 
+    // Load current inventory into the sales table view
     private void loadSalesDisplayTable() {
         salesDisplayModel.setRowCount(0);
         for (int i = 0; i < inventoryModel.getRowCount(); i++) {
             Vector<?> rowData = inventoryModel.getDataVector().elementAt(i);
             salesDisplayModel.addRow(new Object[]{
-                    false,
-                    rowData.get(0),
-                    rowData.get(1),
-                    rowData.get(2),
-                    rowData.get(3),
-                    "",
-                    rowData.get(4)
+                    false, // Select checkbox default false
+                    rowData.get(0), // ID
+                    rowData.get(1), // Type
+                    rowData.get(2), // Name
+                    rowData.get(3), // Price
+                    "",              // Sale Quantity (empty)
+                    rowData.get(4)   // Available Quantity
             });
         }
     }
 
+    // Process the selected sale(s)
     private void processSale() {
         List<SaleRecord> currentSaleItems = new ArrayList<>();
         double totalSaleAmount = 0.0;
@@ -173,6 +193,7 @@ public class SalesWindow extends JFrame {
                     totalSaleAmount += itemTotal;
                     currentSaleItems.add(new SaleRecord(type, name, saleQty, price, itemTotal, currentDateTime));
 
+                    // Update quantity in inventory model
                     for (int j = 0; j < inventoryModel.getRowCount(); j++) {
                         if (inventoryModel.getValueAt(j, 2).toString().equals(name)) {
                             int newQuantity = availableQty - saleQty;
@@ -192,12 +213,14 @@ public class SalesWindow extends JFrame {
             return;
         }
 
+        // Add successful sales to the list
         salesList.addAll(currentSaleItems);
-        loadSalesDisplayTable();
+        loadSalesDisplayTable(); // Refresh table after sale
         JOptionPane.showMessageDialog(this, String.format("Sale processed successfully!\nTotal Amount: $%.2f", totalSaleAmount), "Sale Complete", JOptionPane.INFORMATION_MESSAGE);
-        saveSalesRecords();
+        saveSalesRecords(); // Save to file
     }
 
+    // Show a summary report of all sales
     private void showSalesReport() {
         if (salesList.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No sales records available yet.", "Sales Report", JOptionPane.INFORMATION_MESSAGE);
@@ -221,6 +244,7 @@ public class SalesWindow extends JFrame {
 
         report.append(String.format("\nGrand Total Sales: $%.2f", grandTotal));
 
+        // Show in scrollable dialog
         JTextArea textArea = new JTextArea(report.toString());
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
@@ -228,6 +252,7 @@ public class SalesWindow extends JFrame {
         JOptionPane.showMessageDialog(this, scrollPane, "Sales Report", JOptionPane.PLAIN_MESSAGE);
     }
 
+    // Save all sales to file
     private void saveSalesRecords() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(SALES_FILE_NAME))) {
             for (SaleRecord record : salesList) {
@@ -247,6 +272,7 @@ public class SalesWindow extends JFrame {
         }
     }
 
+    // Load all sales from file into memory
     private void loadSalesRecords() {
         File file = new File(SALES_FILE_NAME);
         if (!file.exists()) return;
@@ -277,6 +303,7 @@ public class SalesWindow extends JFrame {
                     }
                 }
             }
+            // Update next ID for new SaleRecord
             SaleRecord.setNextId(maxId + 1);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error loading sales records: " + e.getMessage(), "Load Error", JOptionPane.ERROR_MESSAGE);
